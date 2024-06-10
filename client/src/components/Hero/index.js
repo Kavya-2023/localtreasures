@@ -1,6 +1,7 @@
 import React from 'react';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
+import { Link } from 'react-router-dom';
 
 const heroImages = [
   {
@@ -43,9 +44,11 @@ const Hero = () => {
             <div className="absolute inset-0 flex flex-col justify-center items-center bg-black bg-opacity-50 text-white text-center">
               <h2 className="text-4xl font-bold mb-2">{hero.title}</h2>
               <p className="text-xl mb-4">{hero.subtitle}</p>
-              <a href={hero.buttonLink} className="bg-accent text-white px-4 py-2 rounded-full hover:bg-[#DF4C73CC]">
+<Link to='/products'>
+              <button className="bg-accent text-white px-4 py-2 rounded-full hover:bg-[#DF4C73CC]">
                 {hero.buttonText}
-              </a>
+              </button>
+</Link>
             </div>
           </div>
         ))}

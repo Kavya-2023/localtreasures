@@ -1,6 +1,7 @@
 import React from 'react';
 import Select from 'react-select';
-
+import {IoIosSearch} from 'react-icons/io'
+import { Link } from 'react-router-dom';
 // Dummy data for categories and districts
 const categories = [
   { value: 'foods', label: 'Foods' },
@@ -64,9 +65,11 @@ const ProductCard = ({ product }) => {
         <div className="px-4 py-2">
           <div className="font-bold text-md mb-2 text-text">{product.name}</div>
           <div className="text-md mb-2 text-gray-700">{product.price}</div>
-          <button className="bg-accent text-white text-sm px-3 py-1 rounded-full hover:bg-[#DF4C73CC]">
+          <Link to='/productdetails'>
+            <button className="bg-accent text-white text-sm px-3 py-1 rounded-full hover:bg-[#DF4C73CC]">
             View Details
           </button>
+          </Link>
         </div>
       </div>
     </div>
@@ -81,6 +84,16 @@ const Products = () => {
         <button className="w-full bg-accent text-white px-4 py-2 rounded-full hover:bg-[#DF4C73CC] mb-4">
           All Products
         </button>
+        <div className="relative hidden md:flex">
+            <input 
+              type="text" 
+              placeholder="Search" 
+              className="bg-gray-300 px-4 py-2 rounded-full focus:outline-none w-full"
+            />
+            <button className="absolute right-3 top-3 text-gray-500">
+              <IoIosSearch />
+            </button>
+          </div>
         <div className="mb-4">
           <h3 className="font-bold text-md mb-2">Category</h3>
           <Select options={categories} />

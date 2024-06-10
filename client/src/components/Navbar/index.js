@@ -3,11 +3,18 @@ import { IoIosMenu, IoIosClose, IoIosSearch, IoIosCart, IoMdLocate } from 'react
 import logo from '../../assets/logo.png';
 import { Link } from 'react-router-dom';
 
-const Navbar = () => {
+const Navbar = ({ toggleLogin }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const userEmail = localStorage.getItem('email');
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
+  };
+
+  const handleSignOut = () => {
+    // Remove email from localStorage
+    localStorage.removeItem('email');
+    // Redirect or perform other sign out logic if needed
   };
 
   return (
@@ -44,10 +51,16 @@ const Navbar = () => {
           <button className="text-3xl text-gray-500">
             <IoMdLocate />
           </button>
-          <button className="text-3xl text-gray-500">
+          <Link to='/cart'>
+            <button className="text-3xl text-gray-500">
             <IoIosCart />
           </button>
-          <button className="bg-accent text-white px-5 py-2 rounded-full hover:bg-[#DF4C73CC]">Sign in</button>
+          </Link>
+          {userEmail ? (
+            <button className="bg-accent text-white px-5 py-2 rounded-full hover:bg-[#DF4C73CC]" onClick={handleSignOut}>Sign Out</button>
+          ) : (
+            <button className="bg-accent text-white px-5 py-2 rounded-full hover:bg-[#DF4C73CC]" onClick={toggleLogin}>Sign In</button>
+          )}
           <button onClick={toggleMenu} className="text-3xl cursor-pointer md:hidden text-text">
             {menuOpen ? <IoIosClose /> : <IoIosMenu />}
           </button>
