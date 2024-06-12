@@ -7,7 +7,8 @@ import Products from './components/Products';
 import LoginPopUp from './components/LoginPopUp';
 import Cart from './components/Cart';
 import ProductDetails from './components/ProductDetails'
-
+import ViewMore from './components/ViewMore';
+import DisplayDistrict from './components/DisaplayDistrict';
 function App() {
   const [loginpopup,setLoginpopup]=React.useState(true);
   const [isLogin,setIsLogin]=React.useState(true);
@@ -24,6 +25,8 @@ function App() {
             <Route path="/products" element={<Products />} />
             <Route path='/cart' element={<Cart/>}/>
             <Route path='/productdetails' element={<ProductDetails/>}/>
+            <Route path="/:name" element={<ViewMore />} />
+            <Route path="/district/:districtName" element={<DisplayDistrict/>} />
           </Routes>
 
         </main>

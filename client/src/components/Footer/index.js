@@ -3,7 +3,7 @@ import { FaFacebook, FaInstagram } from 'react-icons/fa';
 
 const Footer = () => {
   return (
-    <footer className="bg-primary py-4 z-50">
+    <footer className="bg-primary py-4">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
         <p className="text-accent text-center md:text-left">
           © {new Date().getFullYear()} LocalTreasures. All rights reserved.

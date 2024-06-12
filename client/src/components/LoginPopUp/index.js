@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { FaGoogle, FaEye, FaEyeSlash } from 'react-icons/fa';
-
+import React, { useEffect, useState } from 'react';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import axios from 'axios';
 const LoginPopUp = ({ toggleLogin, loginpopup, isLogin,setIsLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
@@ -8,17 +8,43 @@ const LoginPopUp = ({ toggleLogin, loginpopup, isLogin,setIsLogin }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  useEffect(()=>{
+    const email=localStorage.getItem("email");
+    if (email){
+      toggleLogin(false);
+    }
+  },[email])
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login or signup logic based on the value of isLogin
+    
     if (isLogin) {
-      // Handle login
+      const response=await axios.post("http://localhost:5000/auth/login",{email,password});
+      console.log(response.data)
+      if (response.data.success==true){
+        alert("Successfull SignIn");
+        localStorage.setItem("email",email);
+        toggleLogin(false);
+      }
+      else{
+        alert("UnSuccessfull");
+        setError(response.message);
+      }
     } else {
-      // Handle signup
+      const response=await axios.post("http://localhost:5000/auth/signup",{name,email,password});
+      if (response.data.success==true){
+        alert("Successfull SignUp");
+        setIsLogin(!isLogin);
+
+      }
+      else{
+        alert("Unsuccessfull");
+        setError(response.message)
+      }
     }
   };
 

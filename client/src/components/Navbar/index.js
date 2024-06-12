@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IoIosMenu, IoIosClose, IoIosSearch, IoIosCart, IoMdLocate } from 'react-icons/io';
 import logo from '../../assets/logo.png';
 import { Link } from 'react-router-dom';
@@ -12,10 +12,12 @@ const Navbar = ({ toggleLogin }) => {
   };
 
   const handleSignOut = () => {
-    // Remove email from localStorage
     localStorage.removeItem('email');
-    // Redirect or perform other sign out logic if needed
+    toggleLogin(true)
   };
+  useEffect(()=>{
+
+  },[userEmail]);
 
   return (
     <header className="bg-background shadow-md fixed top-0 left-0 right-0 z-50">

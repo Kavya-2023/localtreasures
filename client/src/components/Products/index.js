@@ -66,10 +66,16 @@ const ProductCard = ({ product }) => {
           <div className="font-bold text-md mb-2 text-text">{product.name}</div>
           <div className="text-md mb-2 text-gray-700">{product.price}</div>
           <Link to='/productdetails'>
-            <button className="bg-accent text-white text-sm px-3 py-1 rounded-full hover:bg-[#DF4C73CC]">
+            <button className="bg-accent text-white text-sm px-3 py-1 mr-2 rounded-md hover:bg-[#DF4C73CC]">
             View Details
           </button>
+         
           </Link>
+          <Link to='/cart'>
+             <button className="bg-accent text-white text-sm px-3 py-1 rounded-md hover:bg-[#DF4C73CC]">
+            Add
+          </button>
+        </Link>
         </div>
       </div>
     </div>
