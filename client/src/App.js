@@ -26,7 +26,7 @@ function App() {
             <Route path='/cart' element={<Cart/>}/>
             <Route path='/productdetails' element={<ProductDetails/>}/>
             <Route path="/:name" element={<ViewMore />} />
-            <Route path="/district/:districtName" element={<DisplayDistrict/>} />
+            <Route path="/district/:id" element={<DisplayDistrict/>} />
           </Routes>
 
         </main>

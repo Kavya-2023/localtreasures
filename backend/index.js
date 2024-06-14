@@ -9,7 +9,17 @@ import districtRoutes from './routes/district.js';
 
 const PORT = process.env.PORT || 5000;
 const app = express();
+const allowedOrigins = ['http://localhost:3000', '*'];
 
+app.use(cors({
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
 // Middleware
 app.use(cors()); // Ensure CORS is enabled before other middleware
 app.use(express.json()); // Built-in middleware for parsing JSON

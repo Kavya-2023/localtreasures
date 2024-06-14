@@ -3,31 +3,31 @@ import { Link } from 'react-router-dom';
 const categories = [
   {
     name: 'Food',
-    label:"food",
+    label:"foods",
     img: 'https://res.cloudinary.com/dyjkp0r0x/image/upload/v1717917135/Default_foods_0_p7swyo.jpg',
     buttonText: 'View More'
   },
   {
     name: 'Arts and Crafts',
-    label:"Arts_and_Crafts",
+    label:"artsAndCrafts",
     img: 'https://res.cloudinary.com/dyjkp0r0x/image/upload/v1717917170/Default_arts_and_crafts_1_rqyiku.jpg',
     buttonText: 'View More'
   },
   {
     name: 'Fashion and Apparel',
-    label:"Fashion_and_Apparel",
+    label:"fashionAndApparel",
     img: 'https://res.cloudinary.com/dyjkp0r0x/image/upload/v1717917198/Default_Fashion_and_Apparel_0_etj2n8.jpg',
     buttonText: 'View More'
   },
   {
     name: 'Health and Wellness',
-    label:"Health_and_Wellness",
+    label:"healthAndWellness",
     img: 'https://res.cloudinary.com/dyjkp0r0x/image/upload/v1717917227/Default_Health_and_Wellness_1_aww83r.jpg',
     buttonText: 'View More'
   },
   {
     name: 'Home Decor and Furnishing',
-    label:"Home_Decor_and_Furnishing",
+    label:"homeDecorAndFurnishing",
     img: 'https://res.cloudinary.com/dyjkp0r0x/image/upload/v1717917252/Default_Home_Decor_and_Furnishing_3_n0ruw6.jpg',
     buttonText: 'View More'
   }

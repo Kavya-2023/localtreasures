@@ -56,82 +56,27 @@ export const getDistrictById = async (req, res) => {
     }
 };
 
-export const getAllFoods=async(req,res)=>{
-    try{
-        const totalData=await districts.find();
-        const foodData=[];
-        totalData.forEach(dist=>{
-            dist.products.foods.forEach(item=>{
-                foodData.push(item);
-            });
-        });
-        res.status(201).json(foodData);
-    }
-    catch(err){
-        res.status(400).json("failed to get foods data");
-    }
-}
+export const getAllProductsByCategory = async (req, res) => {
+  const { category } = req.query;
 
-export const getAllArtsAndCrafts=async(req,res)=>{
-    try{
-        const totalData=await districts.find();
-        const artsandcraftsData=[];
-        totalData.forEach(dist=>{
-            dist.products.artsAndCrafts.forEach(item=>{
-                artsandcraftsData.push(item);
-            });
-        });
-        res.status(201).json(artsandcraftsData);
-    }
-    catch(err){
-        res.status(400).json("failed to get foods data");
-    }
-}
+  try {
+    const totalData = await districts.find();
+    let products = [];
 
-export const getAllfashionAndApparel=async(req,res)=>{
-    try{
-        const totalData=await districts.find();
-        const Data=[];
-        totalData.forEach(dist=>{
-            dist.products.fashionAndApparel.forEach(item=>{
-                Data.push(item);
-            });
+    totalData.forEach(dist => {
+      if (dist.products[category]) {
+        dist.products[category].forEach(item => {
+          products.push(item);
         });
-        res.status(201).json(Data);
-    }
-    catch(err){
-        res.status(400).json("failed to get foods data");
-    }
-}
+      }
+    });
 
-export const getAllHealthAndWellness=async(req,res)=>{
-    try{
-        const totalData=await districts.find();
-        const Data=[];
-        totalData.forEach(dist=>{
-            dist.products.healthAndWellness.forEach(item=>{
-                Data.push(item);
-            });
-        });
-        res.status(201).json(Data);
+    if (products.length === 0) {
+      return res.status(404).json({ message: `No products found for category: ${category}` });
     }
-    catch(err){
-        res.status(400).json("failed to get foods data");
-    }
-}
 
-export const getAllHomeDecorAndFurnishing=async(req,res)=>{
-    try{
-        const totalData=await districts.find();
-        const Data=[];
-        totalData.forEach(dist=>{
-            dist.products.homeDecorAndFurnishing.forEach(item=>{
-                Data.push(item);
-            });
-        });
-        res.status(201).json(Data);
-    }
-    catch(err){
-        res.status(400).json("failed to get foods data");
-    }
-}
+    res.status(200).json(products);
+  } catch (err) {
+    res.status(400).json({ message: "Failed to get products data", error: err.message });
+  }
+};
