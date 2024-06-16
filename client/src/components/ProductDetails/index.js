@@ -1,53 +1,59 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { FiMapPin, FiPhone } from 'react-icons/fi'; // Importing address and phone icons
+import axios from 'axios';
 
 const ProductDetails = () => {
-  // Dummy product data
-  const product = {
-    name: 'Product Name',
-    image: 'https://res.cloudinary.com/dyjkp0r0x/image/upload/v1717917170/Default_arts_and_crafts_1_rqyiku.jpg',
-    description: 'create prodcutc details apge in first row card contands product image one side with 400px width 300px height and that prodyct detals right and in next row the sellers cards with heading middle trusted selleres should dsipay',
-    price: '50.00',
-    quantity: 10,
-  };
+  const { id } = useParams(); // Get the product ID from the URL params
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Dummy seller data
-  const sellers = [
-    {
-      name: 'Seller 1',
-      address: '123 Main St, City, Country',
-      contact: '+1234567890',
-    },
-    {
-      name: 'Seller 2',
-      address: '456 Elm St, City, Country',
-      contact: '+9876543210',
-    },
-    {
-      name: 'Seller 3',
-      address: '789 Oak St, City, Country',
-      contact: '+2468135790',
-    },
-  ];
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/district/getproductbyid/${id}`);
+        setProduct(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching product:', error);
+        setError('Failed to fetch product');
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  if (loading) {
+    return <div className="container mx-auto p-4">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="container mx-auto p-4">{error}</div>;
+  }
+
+  if (!product) {
+    return <div className="container mx-auto p-4">Product not found</div>;
+  }
 
   return (
     <div className="container mx-auto p-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Product Image */}
         <div className="col-span-1 md:col-span-1">
-          <img src={product.image} alt={product.name} className="w-400 h-300 rounded-lg" />
+          <img src={product.url} alt={product.name} className="w-full h-auto rounded-lg shadow-md" />
         </div>
         {/* Product Details */}
         <div className="col-span-1 md:col-span-1">
-          <div>
+          <div className="bg-white shadow-md rounded-lg p-4">
             <div className="flex justify-between items-center mb-4">
-              <h1 className="text-3xl font-semibold mb-2">{product.name}</h1>
+              <h1 className="text-3xl font-semibold mb-2 text-text">{product.name}</h1>
               <Link to="/products" className="text-blue-500 hover:underline">Go Back</Link>
             </div>
-            <p className="text-lg text-gray-600 mb-4">{product.description}</p>
+            <p className="text-lg text-gray-600 mb-4">{product.desc}</p>
             <div className="flex items-center mb-4">
-              <span className="text-xl font-semibold text-accent">{product.price}</span>
+              <span className="text-xl font-semibold text-accent">{product.cost}</span>
               <span className="ml-4 text-gray-500">Quantity: {product.quantity}</span>
             </div>
             {/* Add to Cart Button */}
@@ -58,8 +64,8 @@ const ProductDetails = () => {
         <div className="col-span-2 md:col-span-2">
           <h2 className="text-3xl font-semibold mb-4 text-center text-text">Trusted Sellers</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {sellers.map((seller, index) => (
-              <div key={index} className="border border-gray-200 rounded-lg p-4">
+            {product.sellers.map((seller, index) => (
+              <div key={index} className="bg-white shadow-md rounded-lg p-4">
                 <p className="text-lg font-semibold mb-1">{seller.name}</p>
                 <div className="flex items-center mb-1">
                   <FiMapPin className="mr-2" /> {/* Address Icon */}

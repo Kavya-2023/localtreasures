@@ -50,9 +50,11 @@ const Navbar = ({ toggleLogin }) => {
               <IoIosSearch />
             </button>
           </div>
-          <button className="text-3xl text-gray-500">
+          <Link to='/map'>
+            <button className="text-3xl text-gray-500">
             <IoMdLocate />
           </button>
+          </Link>
           <Link to='/cart'>
             <button className="text-3xl text-gray-500">
             <IoIosCart />

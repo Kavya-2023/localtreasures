@@ -9,8 +9,9 @@ import Cart from './components/Cart';
 import ProductDetails from './components/ProductDetails'
 import ViewMore from './components/ViewMore';
 import DisplayDistrict from './components/DisaplayDistrict';
+import Map from './components/Map';
 function App() {
-  const [loginpopup,setLoginpopup]=React.useState(true);
+  const [loginpopup,setLoginpopup]=React.useState(false);
   const [isLogin,setIsLogin]=React.useState(true);
   const toggleLogin=()=>{
     setLoginpopup(!loginpopup);
@@ -24,9 +25,10 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
             <Route path='/cart' element={<Cart/>}/>
-            <Route path='/productdetails' element={<ProductDetails/>}/>
+            <Route path='/productdetails/:id' element={<ProductDetails/>}/>
             <Route path="/:name" element={<ViewMore />} />
             <Route path="/district/:id" element={<DisplayDistrict/>} />
+            <Route path='map' element={<Map/>}/>
           </Routes>
 
         </main>
