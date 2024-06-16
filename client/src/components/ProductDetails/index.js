@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { FiMapPin, FiPhone } from 'react-icons/fi'; // Importing address and phone icons
 import axios from 'axios';
+import { CartContext } from '../../contexts/CartContext'; // Import CartContext
+import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer and toast
+import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for react-toastify
 
 const ProductDetails = () => {
   const { id } = useParams(); // Get the product ID from the URL params
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { addToCart } = useContext(CartContext); // Use CartContext
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -25,6 +29,11 @@ const ProductDetails = () => {
     fetchProduct();
   }, [id]);
 
+  const handleAddToCart = (product) => {
+    addToCart(product);
+    toast.success(`${product.name} added to cart!`);
+  };
+
   if (loading) {
     return <div className="container mx-auto p-4">Loading...</div>;
   }
@@ -39,6 +48,7 @@ const ProductDetails = () => {
 
   return (
     <div className="container mx-auto p-4">
+      <ToastContainer /> {/* Add ToastContainer */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Product Image */}
         <div className="col-span-1 md:col-span-1">
@@ -57,7 +67,12 @@ const ProductDetails = () => {
               <span className="ml-4 text-gray-500">Quantity: {product.quantity}</span>
             </div>
             {/* Add to Cart Button */}
-            <button className="bg-accent text-white px-5 py-2 rounded hover:bg-[#DF4C73CC] mb-4">Add to Cart</button>
+            <button
+              onClick={() => handleAddToCart(product)}
+              className="bg-accent text-white px-5 py-2 rounded hover:bg-[#DF4C73CC] mb-4"
+            >
+              Add to Cart
+            </button>
           </div>
         </div>
         {/* Trusted Sellers */}

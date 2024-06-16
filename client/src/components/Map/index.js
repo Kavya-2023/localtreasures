@@ -1,12 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { MapContainer, TileLayer, useMapEvents, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { CartContext } from '../../contexts/CartContext';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Map = () => {
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [nearbyProducts, setNearbyProducts] = useState([]);
+  const { addToCart } = useContext(CartContext);
 
   const LocationMarker = () => {
     const map = useMapEvents({
@@ -43,8 +48,22 @@ const Map = () => {
     }
   };
 
+  const handleAddToCart = (product) => {
+    addToCart(product);
+    toast.success(`${product.name} added to cart!`, {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
+
   return (
     <div className="flex flex-col md:flex-row">
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
       <div className="w-full md:w-3/4 p-4">
         <div className="w-full h-96 rounded overflow-hidden shadow-lg bg-white">
           <MapContainer center={[16.30, 80.42]} zoom={13} className="w-full h-full">
@@ -66,17 +85,18 @@ const Map = () => {
                 <img className="w-full h-32 object-cover" src={product.url} alt={product.name} />
                 <div className="px-4 py-2">
                   <div className="font-bold text-md mb-2 text-text">{product.name}</div>
-                  <div className="text-md mb-2 text-gray-700">{product.price}</div>
+                  <div className="text-md mb-2 text-gray-700">{product.cost}</div>
                   <Link to={`/productdetails/${product._id}`}>
                     <button className="bg-accent text-white text-sm px-3 py-1 mr-2 rounded-md hover:bg-[#DF4C73CC]">
                       View Details
                     </button>
                   </Link>
-                  <Link to="/cart">
-                    <button className="bg-accent text-white text-sm px-3 py-1 rounded-md hover:bg-[#DF4C73CC]">
-                      Add
-                    </button>
-                  </Link>
+                  <button
+                    className="bg-accent text-white text-sm px-3 py-1 rounded-md hover:bg-[#DF4C73CC]"
+                    onClick={() => handleAddToCart(product)}
+                  >
+                    Add
+                  </button>
                 </div>
               </div>
             </div>
@@ -88,3 +108,6 @@ const Map = () => {
 };
 
 export default Map;
+
+
+
