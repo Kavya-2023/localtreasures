@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 
 const sellerSchema = new mongoose.Schema({
-  name: String,
-  address: String,
-  contact: String,
+  name: { type: String },
+  address: { type: String },
+  contact: { type: String }
 });
 
 const productSchema = new mongoose.Schema({
@@ -17,7 +17,7 @@ const productSchema = new mongoose.Schema({
     long: Number,
   },
   address: String,
-  sellers: [sellerSchema],
+  sellers: Array,
 });
 
 const districtSchema = new mongoose.Schema({

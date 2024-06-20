@@ -6,6 +6,7 @@ dotenv.config();
 
 import authRoutes from './routes/auth.js';
 import districtRoutes from './routes/district.js';
+import countryRoutes from './routes/country.js';
 
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -28,6 +29,7 @@ app.use(express.urlencoded({ extended: true })); // Built-in middleware for pars
 // Routes
 app.use('/auth', authRoutes);
 app.use('/district', districtRoutes);
+app.use('/',countryRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
@@ -49,3 +51,6 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
   .catch(err => {
     console.error('MongoDB connection error:', err);
   });
+
+
+

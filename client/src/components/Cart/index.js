@@ -2,6 +2,7 @@
 import React, { useContext } from 'react';
 import { FiMinusCircle, FiPlusCircle, FiTrash2 } from 'react-icons/fi';
 import { CartContext } from '../../contexts/CartContext';
+import { Link } from 'react-router-dom';
 
 const Cart = () => {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity, clearCart, getTotalAmount } = useContext(CartContext);
@@ -42,7 +43,9 @@ const Cart = () => {
             <p className="text-xl">{getTotalAmount()}</p>
           </div>
           <button onClick={clearCart} className="bg-accent text-white px-5 py-2 rounded mt-8 hover:bg-[#DF4C73CC] mr-3">Clear Cart</button>
-          <button className="bg-accent text-white px-5 py-2 rounded mt-8 hover:bg-[#DF4C73CC]">Checkout</button>
+          <Link to='/checkout'>
+            <button className="bg-accent text-white px-5 py-2 rounded mt-8 hover:bg-[#DF4C73CC]">Checkout</button>
+          </Link>
         </>
       )}
     </div>

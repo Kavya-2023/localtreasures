@@ -4,6 +4,7 @@ import axios from 'axios';
 import { CartContext } from '../../contexts/CartContext';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { CountryStateContext } from '../../contexts/CountryStateContext';
 
 const ItemCardSmall = ({ item, onAddToCart }) => {
   return (
@@ -27,12 +28,13 @@ const ViewMore = () => {
   const category = name;
   const [items, setItems] = useState([]);
   const { addToCart } = useContext(CartContext);
+  const {selectedState} = useContext(CountryStateContext);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/district/getproductsby?category=${category}`);
-        setItems(response.data);
+        const response = await axios.get(`http://localhost:5000/productsbycategory?stateName=${selectedState}?categoryName=${category}`);
+        setItems(response.data.products);
       } catch (err) {
         console.error("Failed to fetch data", err);
       }

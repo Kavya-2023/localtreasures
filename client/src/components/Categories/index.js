@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+
 const categories = [
   {
     name: 'Food',
-    label:"foods",
+    label:"food",
     img: 'https://res.cloudinary.com/dyjkp0r0x/image/upload/v1717917135/Default_foods_0_p7swyo.jpg',
     buttonText: 'View More'
   },
