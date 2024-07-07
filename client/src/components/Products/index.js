@@ -24,7 +24,7 @@ const ProductCard = ({ product }) => {
         <div className="px-4 py-2">
           <div className="font-bold text-md mb-2 text-text">{product.name}</div>
           <div className="text-md mb-2 text-gray-700">{product.cost}</div>
-          <Link to={`/productdetails/${product._id}`}>
+          <Link to={`/products/${product._id}`}>
             <button className="bg-accent text-white text-sm px-3 py-1 mr-2 rounded-md hover:bg-[#DF4C73CC]">
               View Details
             </button>
@@ -47,8 +47,40 @@ const Products = () => {
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [districts, setDistricts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { selectedCountry, selectedState } = useContext(CountryStateContext);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        let url = 'http://localhost:5000/productsbydistrictandcategory';
+        const params = new URLSearchParams({
+          stateName: selectedState,
+          countryName: selectedCountry,
+        });
+
+        if (selectedCategory) {
+          params.append('categoryName', selectedCategory.value);
+        }
+        if (selectedDistrict) {
+          params.append('districtName', selectedDistrict.value);
+        }
+
+        const response = await axios.get(`${url}?${params.toString()}`);
+        setProducts(response.data.products);
+        setFilteredProducts(response.data.products);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (selectedState && selectedCountry) {
+      fetchProducts();
+    }
+  }, [selectedCountry, selectedState, selectedCategory, selectedDistrict]);
 
   useEffect(() => {
     const fetchDistricts = async () => {
@@ -67,42 +99,13 @@ const Products = () => {
 
     if (selectedCountry && selectedState) {
       fetchDistricts();
+      fetchAllProducts();
     }
   }, [selectedState, selectedCountry]);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        let url = 'http://localhost:5000/productsbydistrictandcategory';
-        const params = new URLSearchParams({
-          stateName: selectedState,
-          countryName: selectedCountry,
-        });
-
-        if (selectedCategory) {
-          params.append('categoryName', selectedCategory.value);
-        }
-        if (selectedDistrict) {
-          params.append('districtName', selectedDistrict.value);
-        }
-
-        const response = await axios.get(`${url}?${params.toString()}`);
-        setProducts(response.data);
-        setFilteredProducts(response.data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (selectedState && selectedCountry && (selectedCategory || selectedDistrict)) {
-      fetchProducts();
-    }
-  }, [selectedCategory, selectedDistrict, selectedCountry, selectedState]);
-
   const fetchAllProducts = async () => {
     try {
+      setLoading(true);
       let url = `http://localhost:5000/products?stateName=${selectedState}`;
       const response = await axios.get(url);
       setProducts(response.data.products);

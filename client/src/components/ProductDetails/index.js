@@ -7,16 +7,16 @@ import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer
 import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for react-toastify
 
 const ProductDetails = () => {
-  const { id } = useParams(); // Get the product ID from the URL params
+  const { id } = useParams(); 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { addToCart } = useContext(CartContext); // Use CartContext
+  const { addToCart } = useContext(CartContext); 
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/district/getproductbyid/${id}`);
+        const response = await axios.get(`http://localhost:5000/products/${id}`);
         setProduct(response.data);
         setLoading(false);
       } catch (error) {
