@@ -1,18 +1,20 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { useContext } from "react";
+import { CountryStateContext } from "../../contexts/CountryStateContext";
 
 function DistrictCarousel() {
   const [scrolling, setScrolling] = useState(true);
   const [districts, setDistricts] = useState([]);
   const listRef = useRef(null);
   const hoverRef = useRef(false);
-
+  const {selectedState,selectedCountry}=useContext(CountryStateContext)
   useEffect(() => {
     
     const fetchDistricts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/district/getalldistricts");
+        const response = await axios.get(`http://localhost:5000/getdistrictdatabystate?stateName=${selectedState}&countryName=${selectedCountry}`);
         setDistricts(response.data);
       } catch (error) {
         console.error("Failed to fetch districts:", error);
@@ -20,7 +22,7 @@ function DistrictCarousel() {
     };
 
     fetchDistricts();
-  }, []);
+  }, [selectedCountry,selectedState]);
 
   useEffect(() => {
     let animationFrame;
@@ -62,7 +64,7 @@ function DistrictCarousel() {
             <div key={index} className="p-2 flex-shrink-0">
               <div className="w-44 h-44 border border-gray-300 p-4 rounded-md shadow-md flex justify-center flex-col items-center">
                 <h2 className="text-lg font-semibold mb-2">{district.name}</h2>
-                <Link to={`/district/${district._id}`}>
+                <Link to={`/district/${district.name}`}>
                   <button className="px-4 py-2 bg-accent text-white rounded-md hover:bg-[#DF4C73CC]">
                     View
                   </button>

@@ -9,7 +9,8 @@ import {
   getAllProductsByDistrict,
   getProductById,
   getAllProductsByCategoryAndDistrict,
-  getNearestProducts
+  getNearestProducts,
+  getDistrictByState
 } from '../controllers/country.js';
 
 
@@ -24,4 +25,6 @@ router.get('/productsbydistrict', getAllProductsByDistrict);
 router.get('/products/:productId', getProductById);
 router.get('/productsbydistrictandcategory',getAllProductsByCategoryAndDistrict)
 router.get('/getnearestproducts',getNearestProducts)
+router.get('/getdistrictdatabystate',getDistrictByState);
+
 export default router;

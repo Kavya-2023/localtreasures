@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import Razorpay from 'razorpay';
 dotenv.config();
 
 import authRoutes from './routes/auth.js';
@@ -21,6 +22,44 @@ app.use(cors({
     }
   }
 }));
+
+
+app.post("/order", async (req, res) => {
+  try {
+    const razorpay = new Razorpay({
+      key_id: "rzp_test_pnqesD1bWPOsNm",
+      key_secret:"ThGU0itoGMUGidvtmbgYv12C"
+    });
+    const options = req.body;
+    const order = await razorpay.orders.create(options);
+
+    if (!order) {
+      return res.status(500).send("Error creating order");
+    }
+    res.json(order);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error creating order");
+  }
+});
+
+app.post('/order/validate', async (req, res) => {
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+  const sha = crypto.createHmac("sha256", "ThGU0itoGMUGidvtmbgYv12C");
+  sha.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+  const signature = sha.digest("hex");
+
+  if (signature !== razorpay_signature) {
+    return res.status(400).json({ msg: "Transaction is not legit!" });
+  }
+
+  res.json({
+    msg: "success",
+    orderId: razorpay_order_id,
+    paymentId: razorpay_payment_id
+  });
+}); 
 // Middleware
 app.use(cors()); // Ensure CORS is enabled before other middleware
 app.use(express.json()); // Built-in middleware for parsing JSON

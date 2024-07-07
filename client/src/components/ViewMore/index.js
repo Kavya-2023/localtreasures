@@ -5,6 +5,7 @@ import { CartContext } from '../../contexts/CartContext';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { CountryStateContext } from '../../contexts/CountryStateContext';
+import Loader from '../Loader';
 
 const ItemCardSmall = ({ item, onAddToCart }) => {
   return (
@@ -23,25 +24,49 @@ const ItemCardSmall = ({ item, onAddToCart }) => {
   );
 };
 
+const Popup = ({ message, onClose }) => {
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div className="bg-white p-4 rounded shadow-lg">
+        <h2 className="text-lg font-semibold mb-2">Notification</h2>
+        <p>{message}</p>
+        <button className="mt-4 bg-accent text-white px-3 py-1 rounded hover:bg-[#DF4C73CC]" onClick={onClose}>
+          OK
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const ViewMore = () => {
   const { name } = useParams();
   const category = name;
   const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true); // Add loading state
+  const [showPopup, setShowPopup] = useState(false);
   const { addToCart } = useContext(CartContext);
-  const {selectedState} = useContext(CountryStateContext);
+  const { selectedState } = useContext(CountryStateContext);
 
   useEffect(() => {
+    if (!selectedState) {
+      setShowPopup(true);
+      setLoading(false); // Set loading to false if no state selected
+      return;
+    }
+
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/productsbycategory?stateName=${selectedState}?categoryName=${category}`);
+        const response = await axios.get(`http://localhost:5000/productsbycategory?stateName=${selectedState}&categoryName=${category}`);
         setItems(response.data.products);
       } catch (err) {
         console.error("Failed to fetch data", err);
+      } finally {
+        setLoading(false); // Set loading to false after data is fetched
       }
     };
 
     fetchData();
-  }, [category]);
+  }, [category, selectedState]);
 
   const handleAddToCart = (item) => {
     addToCart(item);
@@ -56,8 +81,21 @@ const ViewMore = () => {
     });
   };
 
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+  if (loading) {
+    return (
+      <div className="container mx-auto p-4 mb-[200px]">
+        <Loader />
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto p-4 mb-[200px]">
+      {showPopup && <Popup message="Please select a state first!" onClose={handleClosePopup} />}
       <h1 className="text-2xl font-semibold mb-8 text-text text-center">{name}</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
         {items.map(item => (

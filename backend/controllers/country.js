@@ -92,7 +92,6 @@ export const getProductsByState = async (req, res) => {
 
 export const getAllProductsByCategory = async (req, res) => {
   const { stateName, categoryName } = req.query;
-
   try {
     const state = await State.findOne({ name: stateName });
     if (!state) {
@@ -172,32 +171,64 @@ export const getProductById = async (req, res) => {
 };
 
 export const getAllProductsByCategoryAndDistrict = async (req, res) => {
-  const { districtName, categoryName } = req.query;
+  const { stateName,countryName,districtName, categoryName } = req.query;
 
   try {
-    const district = await District.findOne({ name: districtName });
+    if (districtName && categoryName){
+      const district = await District.findOne({ name: districtName });
+      if (!district) {
+        return res.status(404).json({ message: 'District not found' });
+      }
+      const category = await Category.findOne({ name: categoryName, districtId: district._id });
+      if (!category) {
+        return res.status(404).json({ message: 'Category not found in the specified district' });
+      }
+      const products = await Product.find({ categoryId: category._id });
+      res.status(200).json({products});
+      }
+    else if(districtName){
+      const state = await State.findOne({ name: stateName });
+    if (!state) {
+      return res.status(404).json({ message: 'State not found' });
+    }
+
+    const district = await District.findOne({ name: districtName, stateId: state._id });
     if (!district) {
       return res.status(404).json({ message: 'District not found' });
     }
 
-    
-    const category = await Category.findOne({ name: categoryName });
-    if (!category) {
-      return res.status(404).json({ message: 'Category not found' });
+    const categories = await Category.find({ districtId: district._id });
+    const categoryIds = categories.map(cat => cat._id);
+    const products = await Product.find({ categoryId: { $in: categoryIds } });
+
+    res.status(200).json({ products });
+    }
+    else if(categoryName){
+      const state = await State.findOne({ name: stateName});
+    if (!state) {
+      return res.status(404).json({ message: 'State not found' });
     }
 
-    const products = await Product.find({ categoryId: category._id });
+    const districts = await District.find({ stateId: state._id });
 
-    if (products.length === 0) {
-      return res.status(404).json({ message: 'No products found matching the criteria' });
+    const categoryFilter = categoryName ? { name: categoryName } : {};
+    const categories = await Category.find({ ...categoryFilter, districtId: { $in: districts.map(d => d._id) } });
+
+    const categoryIds = categories.map(c => c._id);
+    const products = await Product.find({ categoryId: { $in: categoryIds } });
+
+    res.status(200).json({ products });
     }
-
-    res.status(200).json(products);
   } catch (err) {
     console.error('Error fetching products:', err);
     res.status(500).json({ message: 'Internal server error', error: err.message });
   }
 };
+
+
+
+
+
 
 
 export const getNearestProducts = async (req, res) => {
@@ -229,4 +260,29 @@ export const getNearestProducts = async (req, res) => {
     res.status(500).json({ message: 'Error fetching nearby products', error });
   }
 };
+
+export const getDistrictByState=async (req,res)=>{
+  const {stateName,countryName}=req.query;
+  try{
+    const country=await Country.findOne({name:countryName});
+    if (!country) {
+      return res.status(404).json({ message: 'Country not found' });
+    }
+    const state=await State.findOne({name:stateName})
+    if (!state) {
+      return res.status(404).json({ message: 'State not found' });
+    }
+    const districts = await District.find({ stateId: state._id });
+    if(!districts){
+      return res.status(404).json({ message: 'Districts not found' });
+    }
+    
+    res.status(200).json(districts);
+
+  }
+  catch(err){
+    res.status(404).json({message:'error occured'})
+  }
+}
+
 

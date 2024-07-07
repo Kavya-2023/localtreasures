@@ -31,7 +31,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/products" element={<Products />} />
-                <Route path="/cart" element={<Cart />} />
+                <Route path="/cart" element={<Cart toggleLogin={toggleLogin}/>} />
                 <Route path="/productdetails/:id" element={<ProductDetails />} />
                 <Route path="/:name" element={<ViewMore />} />
                 <Route path="/district/:id" element={<DisplayDistrict />} />

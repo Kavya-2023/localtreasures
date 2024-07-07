@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useContext  } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Select from 'react-select';
 import { IoIosSearch } from 'react-icons/io';
 import { Link } from 'react-router-dom';
 import { CartContext } from '../../contexts/CartContext';
 import axios from 'axios';
+import Loader from '../Loader'; 
+import { CountryStateContext } from '../../contexts/CountryStateContext';
 
 const categories = [
   { value: 'foods', label: 'Foods' },
@@ -11,22 +13,6 @@ const categories = [
   { value: 'fashionAndApparel', label: 'Fashion and Apparel' },
   { value: 'healthAndWellness', label: 'Health and Wellness' },
   { value: 'homeDecorAndFurnishing', label: 'Home Decor and Furnishing' },
-];
-
-const districts = [
-  { value: 'anantapur', label: 'Anantapur' },
-  { value: 'chittoor', label: 'Chittoor' },
-  { value: 'eastGodavari', label: 'East Godavari' },
-  { value: 'guntur', label: 'Guntur' },
-  { value: 'krishna', label: 'Krishna' },
-  { value: 'kurnool', label: 'Kurnool' },
-  { value: 'nellore', label: 'SPSR Nellore' },
-  { value: 'prakasam', label: 'Prakasam' },
-  { value: 'srikakulam', label: 'Srikakulam' },
-  { value: 'visakhapatnam', label: 'Visakhapatnam' },
-  { value: 'vizianagaram', label: 'Vizianagaram' },
-  { value: 'westGodavari', label: 'West Godavari' },
-  { value: 'Kadapa', label: 'YSR Kadapa' },
 ];
 
 const ProductCard = ({ product }) => {
@@ -59,45 +45,74 @@ const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [districts, setDistricts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
+  const { selectedCountry, selectedState } = useContext(CountryStateContext);
+
+  useEffect(() => {
+    const fetchDistricts = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/getdistrictdatabystate?stateName=${selectedState}&countryName=${selectedCountry}`);
+        
+        const districtOptions = response.data.map(district => ({
+          value: district.name,
+          label: district.name
+        }));
+        setDistricts(districtOptions);
+      } catch (error) {
+        console.error('Error fetching districts:', error);
+      }
+    };
+
+    if (selectedCountry && selectedState) {
+      fetchDistricts();
+    }
+  }, [selectedState, selectedCountry]);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        let url = 'http://localhost:5000/district/getallproducts';
-        const params = new URLSearchParams();
+        let url = 'http://localhost:5000/productsbydistrictandcategory';
+        const params = new URLSearchParams({
+          stateName: selectedState,
+          countryName: selectedCountry,
+        });
+
         if (selectedCategory) {
-          params.append('category', selectedCategory.value);
+          params.append('categoryName', selectedCategory.value);
         }
         if (selectedDistrict) {
-          params.append('district', selectedDistrict.value);
-        }
-      
-        if (params.toString()) {
-          url += `?${params.toString()}`;
+          params.append('districtName', selectedDistrict.value);
         }
 
-        const response = await axios.get(url);
+        const response = await axios.get(`${url}?${params.toString()}`);
         setProducts(response.data);
+        setFilteredProducts(response.data);
       } catch (error) {
         console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchProducts();
-  }, [selectedCategory, selectedDistrict, searchTerm]);
+    if (selectedState && selectedCountry && (selectedCategory || selectedDistrict)) {
+      fetchProducts();
+    }
+  }, [selectedCategory, selectedDistrict, selectedCountry, selectedState]);
 
-  useEffect(() => {
-    const filterProducts = () => {
-      const filtered = products.filter(product =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-
-      setFilteredProducts(filtered);
-    };
-
-    filterProducts();
-  }, [searchTerm, products]);
+  const fetchAllProducts = async () => {
+    try {
+      let url = `http://localhost:5000/products?stateName=${selectedState}`;
+      const response = await axios.get(url);
+      setProducts(response.data.products);
+      setFilteredProducts(response.data.products);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSearchInputChange = (event) => {
     setSearchTerm(event.target.value);
@@ -112,11 +127,9 @@ const Products = () => {
   };
 
   const handleSearch = () => {
-    
-    const filtered = products.filter(product =>
+    const filtered = products.filter((product) =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
     setFilteredProducts(filtered);
   };
 
@@ -124,8 +137,16 @@ const Products = () => {
     setSelectedCategory(null);
     setSelectedDistrict(null);
     setSearchTerm('');
-    setFilteredProducts(products);
+    fetchAllProducts();
   };
+
+  if (loading) {
+    return (
+      <div className="container mx-auto p-4 mb-[200px]">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col md:flex-row">
@@ -151,7 +172,7 @@ const Products = () => {
             }}
           />
           <button
-            className="absolute right-3 top-3  text-gray-500 "
+            className="absolute right-3 top-3 text-gray-500"
             onClick={handleSearch}
           >
             <IoIosSearch />

@@ -1,11 +1,25 @@
-// src/components/Cart.js
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { FiMinusCircle, FiPlusCircle, FiTrash2 } from 'react-icons/fi';
 import { CartContext } from '../../contexts/CartContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-const Cart = () => {
+const Cart = ({ toggleLogin }) => {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity, clearCart, getTotalAmount } = useContext(CartContext);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const navigate = useNavigate();
+
+  const handleCheckout = () => {
+    const userEmail = localStorage.getItem('email');
+    if (!userEmail) {
+      setShowLoginPrompt(true);
+    } else {
+      navigate('/checkout');
+    }
+  };
+
+  const handleClosePrompt = () => {
+    setShowLoginPrompt(false);
+  };
 
   return (
     <div className="container mx-auto p-10">
@@ -43,10 +57,20 @@ const Cart = () => {
             <p className="text-xl">{getTotalAmount()}</p>
           </div>
           <button onClick={clearCart} className="bg-accent text-white px-5 py-2 rounded mt-8 hover:bg-[#DF4C73CC] mr-3">Clear Cart</button>
-          <Link to='/checkout'>
-            <button className="bg-accent text-white px-5 py-2 rounded mt-8 hover:bg-[#DF4C73CC]">Checkout</button>
-          </Link>
+          <button onClick={handleCheckout} className="bg-accent text-white px-5 py-2 rounded mt-8 hover:bg-[#DF4C73CC]">Checkout</button>
         </>
+      )}
+      {showLoginPrompt && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-4 rounded shadow-lg">
+            <h2 className="text-lg font-semibold mb-2">Please Sign Up or Log In</h2>
+            <p>You need to sign up or log in to proceed to checkout.</p>
+            <div className="mt-4 flex justify-end">
+              <button className="bg-accent text-white px-3 py-1 rounded hover:bg-[#DF4C73CC] mr-2" onClick={handleClosePrompt}>Cancel</button>
+              <button className="bg-accent text-white px-3 py-1 rounded hover:bg-[#DF4C73CC]" onClick={toggleLogin}>Sign Up / Log In</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
