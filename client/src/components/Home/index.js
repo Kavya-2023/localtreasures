@@ -3,6 +3,7 @@ import Hero from '../Hero';
 import Categories from '../Categories';
 import Banner from '../Banner';
 import DistrictCarousel from '../DistrictCarousel';
+import NearbyProducts from '../NearbyProducts';
 
 const Home = () => {
   return (
@@ -10,6 +11,7 @@ const Home = () => {
       <Hero />
       <Categories />
       <Banner/>
+      <NearbyProducts/>
       <DistrictCarousel/>
     </div>
   );

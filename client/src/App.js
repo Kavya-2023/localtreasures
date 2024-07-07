@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -13,14 +13,21 @@ import Map from './components/Map';
 import Checkout from './components/Checkout';
 import { CartProvider } from './contexts/CartContext';
 import { CountryStateProvider } from './contexts/CountryStateContext'; 
-
+import axios from 'axios';
 function App() {
+  const [currentLocation,setCurrentLocation]=useState({});
   const [loginpopup, setLoginpopup] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const toggleLogin = () => {
     setLoginpopup(!loginpopup);
   };
-
+  useEffect(()=>{
+    getLocation();
+  },[])
+  const getLocation=async()=>{
+    const location=await axios.get('https://ipapi.co/json');
+    setCurrentLocation(location.data);
+  }
   return (
     <Router>
       <CartProvider>

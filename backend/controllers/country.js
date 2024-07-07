@@ -299,4 +299,30 @@ export const getDistrictByState=async (req,res)=>{
   }
 }
 
+export const getCurrentLocationProducts=async(req,res)=>{
+  const { latitude, longitude } = req.query;
+
+  if (!latitude || !longitude) {
+    return res.status(400).json({ message: 'Latitude and Longitude are required' });
+  }
+
+  try {
+    const validProducts = await Product.find({
+      'location.lat': { $exists: true },
+      'location.long': { $exists: true }
+    });
+    validProducts.forEach(product => {
+      const dist = Math.sqrt((product.location.lat - parseFloat(latitude)) ** 2 + (product.location.long - parseFloat(longitude)) ** 2);
+      product.distance = dist;
+    });
+
+    validProducts.sort((a, b) => a.distance - b.distance);
+    res.json(validProducts.slice(0, 4));
+  } catch (error) {
+    console.error('Error fetching nearby products:', error);
+    res.status(500).json({ message: 'Error fetching nearby products', error });
+  }
+
+}
+
 
