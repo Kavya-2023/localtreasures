@@ -1,22 +1,24 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { FiMapPin, FiPhone } from 'react-icons/fi'; // Importing address and phone icons
+import { FiMapPin, FiPhone } from 'react-icons/fi';
 import axios from 'axios';
-import { CartContext } from '../../contexts/CartContext'; // Import CartContext
-import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer and toast
-import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for react-toastify
+import { CartContext } from '../../contexts/CartContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ProductDetails = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { addToCart } = useContext(CartContext); 
+
+  const { addToCart } = useContext(CartContext);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/products/${id}`);
+        console.log('Product details response:', response.data); // Log the response data
         setProduct(response.data);
         setLoading(false);
       } catch (error) {
@@ -48,13 +50,11 @@ const ProductDetails = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <ToastContainer /> {/* Add ToastContainer */}
+      <ToastContainer />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Product Image */}
         <div className="col-span-1 md:col-span-1">
           <img src={product.url} alt={product.name} className="w-full h-auto rounded-lg shadow-md" />
         </div>
-        {/* Product Details */}
         <div className="col-span-1 md:col-span-1">
           <div className="bg-white shadow-md rounded-lg p-4">
             <div className="flex justify-between items-center mb-4">
@@ -66,7 +66,6 @@ const ProductDetails = () => {
               <span className="text-xl font-semibold text-accent">{product.cost}</span>
               <span className="ml-4 text-gray-500">Quantity: {product.quantity}</span>
             </div>
-            {/* Add to Cart Button */}
             <button
               onClick={() => handleAddToCart(product)}
               className="bg-accent text-white px-5 py-2 rounded hover:bg-[#DF4C73CC] mb-4"
@@ -75,7 +74,6 @@ const ProductDetails = () => {
             </button>
           </div>
         </div>
-        {/* Trusted Sellers */}
         <div className="col-span-2 md:col-span-2">
           <h2 className="text-3xl font-semibold mb-4 text-center text-text">Trusted Sellers</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -83,11 +81,11 @@ const ProductDetails = () => {
               <div key={index} className="bg-white shadow-md rounded-lg p-4">
                 <p className="text-lg font-semibold mb-1">{seller.name}</p>
                 <div className="flex items-center mb-1">
-                  <FiMapPin className="mr-2" /> {/* Address Icon */}
+                  <FiMapPin className="mr-2" />
                   <p className="text-gray-600">{seller.address}</p>
                 </div>
                 <div className="flex items-center">
-                  <FiPhone className="mr-2" /> {/* Phone Icon */}
+                  <FiPhone className="mr-2" />
                   <p className="text-gray-600">{seller.contact}</p>
                 </div>
               </div>
