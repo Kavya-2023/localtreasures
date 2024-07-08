@@ -2,12 +2,15 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import crypto from 'crypto';
 import Razorpay from 'razorpay';
+import Order from './models/orderModel.js';
 dotenv.config();
 
 import authRoutes from './routes/auth.js';
 import districtRoutes from './routes/district.js';
 import countryRoutes from './routes/country.js';
+
 
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -27,6 +30,11 @@ app.use(cors({
     }
   }
 }));
+
+// Middleware
+app.use(cors()); 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true })); 
 
 
 app.post("/order", async (req, res) => {
@@ -65,10 +73,32 @@ app.post('/order/validate', async (req, res) => {
     paymentId: razorpay_payment_id
   });
 }); 
-// Middleware
-app.use(cors()); // Ensure CORS is enabled before other middleware
-app.use(express.json()); // Built-in middleware for parsing JSON
-app.use(express.urlencoded({ extended: true })); // Built-in middleware for parsing URL-encoded data
+
+app.post('/offline', async (req, res) => {
+  try {
+    const { name, email, phone, address, pincode, paymentMethod, amount } = req.body;
+    if (!name || !email || !phone || !address || !pincode || !paymentMethod || !amount) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+    const newOrder = new Order({
+      name,
+      email,
+      phone,
+      address,
+      pincode,
+      paymentMethod,
+      amount
+    });
+
+    await newOrder.save();
+
+    res.status(201).json({ message: 'Order created successfully' });
+  } catch (error) {
+    console.error('Error creating order:', error);
+    res.status(500).json({ message: 'Failed to create order', error });
+  }
+});
+
 
 // Routes
 app.use('/auth', authRoutes);

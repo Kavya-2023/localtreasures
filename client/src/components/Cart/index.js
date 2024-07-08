@@ -28,15 +28,15 @@ const Cart = ({ toggleLogin }) => {
         <p className="text-center text-gray-500">Your cart is empty</p>
       ) : (
         cart.map((item) => (
-          <div key={item.id} className="flex items-center justify-between border-b border-gray-200 py-4">
+          <div key={item._id} className="flex items-center justify-between border-b border-gray-200 py-4">
             <div>
               <h2 className="text-lg font-semibold">{item.name}</h2>
               <div className="flex items-center">
-                <button onClick={() => decreaseQuantity(item.id)} className="text-gray-500 hover:text-gray-700 focus:outline-none">
+                <button onClick={() => decreaseQuantity(item._id)} className="text-gray-500 hover:text-gray-700 focus:outline-none">
                   <FiMinusCircle />
                 </button>
                 <span className="mx-2">{item.quantity}</span>
-                <button onClick={() => increaseQuantity(item.id)} className="text-gray-500 hover:text-gray-700 focus:outline-none">
+                <button onClick={() => increaseQuantity(item._id)} className="text-gray-500 hover:text-gray-700 focus:outline-none">
                   <FiPlusCircle />
                 </button>
               </div>

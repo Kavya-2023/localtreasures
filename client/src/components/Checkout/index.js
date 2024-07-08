@@ -15,7 +15,6 @@ const Checkout = () => {
 
   // State variables
   const [form, setForm] = useState(() => {
-    // Fetch initial form data from localStorage if available
     const savedForm = JSON.parse(localStorage.getItem('checkoutForm')) || {
       name: '',
       email: '',
@@ -134,7 +133,7 @@ const Checkout = () => {
 
   const createOnlineOrder = async (name, email, phone, address, pincode, amount, paymentMethod, orderId, paymentId) => {
     try {
-      await axios.post('http://localhost:5000/api/payment/order', {
+      await axios.post('http://localhost:5000/offline', {
         name,
         email,
         phone,
@@ -153,7 +152,7 @@ const Checkout = () => {
 
   const handleOfflinePayment = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/payment/order', {
+      const response = await axios.post('http://localhost:5000/offline', {
         name: form.name,
         email: form.email,
         phone: form.phone,
@@ -163,7 +162,7 @@ const Checkout = () => {
         amount: getTotalAmount()
       });
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         clearCart();
         resetForm();
         toast.success('Order placed successfully!');
